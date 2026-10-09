@@ -75,17 +75,17 @@ AxiomRAG/
 ├── requirements.txt
 ├── README.md
 ├── .gitignore
-├── Screenshots/
-│   ├── app-interface.png.png
-│   ├── document-indexing.png.png
-│   ├── answer-verification.png.png
-│   ├── retrieved-evidence.png.png
-│   └── rag-workflow.png.png
+├── screenshots/
+│   ├── app-interface.png
+│   ├── document-indexing.png
+│   ├── answer-verification.png
+│   ├── retrieved-evidence.png
+│   └── rag-workflow.png
 └── docs/
     └── AxiomRAG System Architecture Flowchart.png
 ```
 
-The paths above match the image filenames currently present in this repository. The `.png.png` suffixes are intentional here because that is how the files are currently named.
+The paths above match the current repository filenames.
 
 ## Getting Started
 
@@ -105,7 +105,6 @@ git clone https://github.com/palakshah23/AxiomRAG.git
 cd AxiomRAG
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username and use the actual repository name if it differs.
 
 ### 2. Create a virtual environment
 
@@ -226,23 +225,23 @@ The current tests cover selected critic-parsing behavior. Additional tests for r
 
 ### Application Interface
 
-![AxiomRAG application interface](Screenshots/app-interface.png.png)
+![AxiomRAG application interface](screenshots/app-interface.png)
 
 ### Document Indexing
 
-![AxiomRAG document indexing](Screenshots/document-indexing.png.png)
+![AxiomRAG document indexing](screenshots/document-indexing.png)
 
 ### Answer Verification
 
-![AxiomRAG answer verification](Screenshots/answer-verification.png.png)
+![AxiomRAG answer verification](screenshots/answer-verification.png)
 
 ### Retrieved Evidence
 
-![AxiomRAG retrieved evidence](Screenshots/retrieved-evidence.png.png)
+![AxiomRAG retrieved evidence](screenshots/retrieved-evidence.png)
 
 ### RAG Workflow
 
-![AxiomRAG RAG workflow](Screenshots/rag-workflow.png.png)
+![AxiomRAG RAG workflow](screenshots/rag-workflow.png)
 
 ## Learning Outcomes
 
