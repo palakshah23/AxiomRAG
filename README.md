@@ -19,7 +19,7 @@ The application provides a Streamlit interface where users can upload documents,
 
 ## System Architecture
 
-![AxiomRAG System Architecture](docs/axiomrag-architecture.png)
+![AxiomRAG System Architecture](docs/AxiomRAG%20System%20Architecture%20Flowchart.png)
 
 The architecture illustrates the document-indexing pipeline and the question-answering workflow. The diagram represents the intended design; individual components and connections should be validated against the implementation.
 
@@ -75,13 +75,17 @@ AxiomRAG/
 ├── requirements.txt
 ├── README.md
 ├── .gitignore
-├── screenshots/
-│   └── axiomrag-demo.png
+├── Screenshots/
+│   ├── app-interface.png.png
+│   ├── document-indexing.png.png
+│   ├── answer-verification.png.png
+│   ├── retrieved-evidence.png.png
+│   └── rag-workflow.png.png
 └── docs/
-    └── axiomrag-architecture.png
+    └── AxiomRAG System Architecture Flowchart.png
 ```
 
-The screenshot and architecture image filenames should match the files you actually place in these folders.
+The paths above match the image filenames currently present in this repository. The `.png.png` suffixes are intentional here because that is how the files are currently named.
 
 ## Getting Started
 
@@ -97,7 +101,7 @@ Install the following before running the application:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/AxiomRAG.git
+git clone https://github.com/palakshah23/AxiomRAG.git
 cd AxiomRAG
 ```
 
@@ -222,9 +226,23 @@ The current tests cover selected critic-parsing behavior. Additional tests for r
 
 ### Application Interface
 
-![AxiomRAG application screenshot](screenshots/axiomrag-demo.png)
+![AxiomRAG application interface](Screenshots/app-interface.png.png)
 
-The screenshot demonstrates the application's interface. Replace this image path if your screenshot has a different filename or format.
+### Document Indexing
+
+![AxiomRAG document indexing](Screenshots/document-indexing.png.png)
+
+### Answer Verification
+
+![AxiomRAG answer verification](Screenshots/answer-verification.png.png)
+
+### Retrieved Evidence
+
+![AxiomRAG retrieved evidence](Screenshots/retrieved-evidence.png.png)
+
+### RAG Workflow
+
+![AxiomRAG RAG workflow](Screenshots/rag-workflow.png.png)
 
 ## Learning Outcomes
 
