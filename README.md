@@ -239,9 +239,9 @@ The current tests cover selected critic-parsing behavior. Additional tests for r
 
 ![AxiomRAG retrieved evidence](screenshots/retrieved-evidence.png)
 
-### RAG Workflow
+### Initial Application Screen
 
-![AxiomRAG RAG workflow](screenshots/rag-workflow.png)
+![AxiomRAG initial application screen](screenshots/initial-screen.png)
 
 ## Learning Outcomes
 
