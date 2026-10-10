@@ -5,6 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.documents import Document
 from youtube_transcript_api import YouTubeTranscriptApi
 import agent
+import evaluation
 
 st.set_page_config(page_title="AxiomRAG",page_icon="🧠",layout="wide")
 st.markdown("""<style>.block-container{padding-top:1.8rem}.hero{padding:1.5rem;border-radius:18px;color:white;background:linear-gradient(120deg,#172554,#312e81,#581c87);margin-bottom:1rem}</style>""",unsafe_allow_html=True)
@@ -59,6 +60,61 @@ with st.sidebar:
     if st.button("Clear chat",use_container_width=True): st.session_state.messages=[]; st.rerun()
 
 st.markdown('<div class="hero"><h1>AxiomRAG</h1><p>Retrieve. Verify. Refine. Respond.</p><p>Intelligent retrieval · Grounding critic · Bounded retries · Regression tests</p></div>',unsafe_allow_html=True)
+with st.expander("📊 Automated Evaluation", expanded=False):
+    st.caption(
+        "Evaluate answerable and unanswerable questions against "
+        "the currently indexed source."
+    )
+    evaluation_text = st.text_area(
+        "Test questions (one per line; prefix each with ANSWER: or ABSTAIN:)",
+        placeholder=(
+            "ANSWER: What result does the document report?\n"
+            "ABSTAIN: Which GPU model was used?"
+        ),
+        height=130,
+        key="evaluation_questions",
+    )
+    run_evaluation = st.button(
+        "Run Evaluation",
+        disabled=st.session_state.qa_chain is None,
+        key="run_evaluation",
+    )
+    if run_evaluation:
+        test_cases = []
+        for line in evaluation_text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            prefix, sep, question = line.partition(":")
+            if not sep or prefix.strip().upper() not in {"ANSWER", "ABSTAIN"} or not question.strip():
+                st.error("Use ANSWER: question or ABSTAIN: question on each line.")
+                st.stop()
+            test_cases.append({
+                "question": question.strip(),
+                "expected_behavior": "answer" if prefix.strip().upper() == "ANSWER" else "abstain",
+            })
+        if not test_cases:
+            st.warning("Enter at least one test question.")
+        else:
+            with st.spinner("Running evaluation questions..."):
+                report = evaluation.evaluate_questions(
+                    st.session_state.qa_chain, test_cases, attempts
+                )
+            metrics = evaluation.summarize_results(report)
+            st.subheader("Evaluation Results")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Questions", metrics["total"])
+            c2.metric("Behavior pass rate", f'{metrics["behavior_pass_rate_pct"]}%')
+            c3.metric("Mean latency", f'{metrics["mean_latency_seconds"]} sec')
+            st.caption("Behavior pass rate checks expected workflow outcome; it is not a factual-accuracy score.")
+            st.dataframe(report, use_container_width=True)
+            st.download_button(
+                "Download evaluation CSV",
+                report.to_csv(index=False).encode("utf-8"),
+                file_name="axiomrag_evaluation.csv",
+                mime="text/csv",
+            )
+
 if load:
     try:
         with st.spinner("Reading source and indexing..."):
