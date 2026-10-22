@@ -16,6 +16,7 @@ The application provides a Streamlit interface where users can upload documents,
 * **Insufficient-Evidence Handling:** Return a fallback response when an answer cannot be adequately supported.
 * **Diagnostic Visibility:** Inspect attempts, drafts, retrieved evidence, and critic decisions.
 * **Automated Tests:** Include tests for selected critic-parsing behavior.
+* **Automated Evaluation:** Evaluate labeled answerable and unanswerable questions, inspect behavior checks, and export evaluation results to CSV.
 
 ## System Architecture
 
@@ -48,6 +49,7 @@ The architecture illustrates the document-indexing pipeline and the question-ans
 4. If the configured retry limit is reached without an acceptable answer, the system returns an insufficient-evidence response.
 
 **4. Final response**
+
 The application displays the resulting answer and available diagnostic evidence.
 
 ## Technology Stack
@@ -55,7 +57,7 @@ The application displays the resulting answer and available diagnostic evidence.
 | Technology   | Purpose                                 |
 | ------------ | --------------------------------------- |
 | Python       | Core application language               |
-| Streamlit    | Interactive user interface              |
+| Streamlit    | Interactive user interface               |
 | LangChain    | Document processing and LLM integration |
 | LangGraph    | Workflow orchestration                  |
 | Hugging Face | Text embedding generation               |
@@ -63,6 +65,7 @@ The application displays the resulting answer and available diagnostic evidence.
 | Ollama       | Local LLM inference                     |
 | PyPDF        | PDF text extraction                     |
 | Unittest     | Automated testing                       |
+| pandas       | Evaluation result tables and CSV export |
 
 ## Project Structure
 
@@ -70,6 +73,7 @@ The application displays the resulting answer and available diagnostic evidence.
 AxiomRAG/
 ├── agent.py
 ├── app.py
+├── evaluation.py
 ├── main.py
 ├── test_agent.py
 ├── requirements.txt
@@ -80,18 +84,18 @@ AxiomRAG/
 │   ├── document-indexing.png
 │   ├── answer-verification.png
 │   ├── retrieved-evidence.png
-│   └── rag-workflow.png
+│   ├── initial-screen.png
+│   ├── automated-evaluation-input.png
+│   └── automated-evaluation-results.png
 └── docs/
     └── AxiomRAG System Architecture Flowchart.png
 ```
 
-The paths above match the current repository filenames.
+The two automated-evaluation screenshot filenames above are intended for the screenshots shared with the project documentation.
 
 ## Getting Started
 
 ### Prerequisites
-
-Install the following before running the application:
 
 * Python 3.12
 * Git
@@ -105,14 +109,13 @@ git clone https://github.com/palakshah23/AxiomRAG.git
 cd AxiomRAG
 ```
 
-
 ### 2. Create a virtual environment
 
 **Windows PowerShell**
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\\.venv\\Scripts\\Activate.ps1
 ```
 
 If PowerShell blocks activation, use an appropriate execution-policy setting for your environment or activate the environment through VS Code.
@@ -142,11 +145,7 @@ Ensure Ollama is running and the model name matches the configuration in `agent.
 python -m streamlit run app.py
 ```
 
-Open the local URL displayed in the terminal, typically:
-
-```text
-http://localhost:8501
-```
+Open the local URL displayed in the terminal, typically `http://localhost:8501`.
 
 ## How to Use
 
@@ -156,33 +155,70 @@ http://localhost:8501
 4. Enter a question about the document.
 5. Review the generated answer.
 6. Expand the diagnostic section to inspect the critic's decisions, retrieved evidence, and retry history.
-7. Test an unsupported question to evaluate how the application handles missing evidence.
+7. Open **Automated Evaluation**, enter one test question per line prefixed with `ANSWER:` or `ABSTAIN:`, and click **Run Evaluation**.
+8. Inspect the behavior-check results and download the CSV report.
 
 Processing time depends on document size, embedding-model availability, hardware, and the selected LLM.
 
 ## Example Evaluation
 
-The following examples were observed during a manual test using a PDF containing a comparative machine-learning experiment.
+The following examples were observed during manual tests using a PDF containing a comparative machine-learning experiment.
 
-| Test case                                       | Observed result                                    |
-| ----------------------------------------------- | -------------------------------------------------- |
-| Question supported by the PDF                   | Correctly returned the reported accuracy of 0.9825 |
-| Question about unspecified hardware/GPU details | Returned an insufficient-evidence response         |
-| Critic and retry diagnostics                    | Displayed grounding decisions and retry history    |
+| Test case | Observed result |
+| --- | --- |
+| Question supported by the PDF | Returned the reported accuracy of 0.9825 |
+| Question about unspecified hardware/GPU details | Returned an insufficient-evidence response |
+| Critic and retry diagnostics | Displayed grounding decisions and retry history |
 
 ### Example 1: Supported Question
 
-**Question:** What was the accuracy achieved by Logistic Regression and Support Vector Machine on the test set?
+**Input:** What was the accuracy achieved by Logistic Regression and Support Vector Machine on the test set?
 
-**Observed answer:** Both algorithms achieved a test accuracy of **0.9825 (98.25%)**, according to the uploaded document.
+**Observed output:** Both algorithms achieved a test accuracy of **0.9825 (98.25%)**, according to the uploaded document.
 
 ### Example 2: Unsupported Question
 
-**Question:** What specific hardware/GPU configuration was used to train the models?
+**Input:** What specific hardware/GPU configuration was used to train the models?
 
-**Observed answer:** The application reported insufficient evidence because the retrieved context did not establish the hardware or GPU configuration.
+**Observed output:** The application reported insufficient evidence because the retrieved context did not establish the hardware or GPU configuration.
 
 These are manual observations from one document. They do not establish a universal accuracy rate or guarantee that all answers will be grounded.
+
+## Automated Evaluation and Example Screenshots
+
+The evaluation panel accepts labeled questions and reports workflow behavior, attempts, retry usage, critic checks, and response latency. Results can be exported as CSV for further review.
+
+### Evaluation input
+
+![AxiomRAG automated evaluation input](screenshots/automated-evaluation-input.png)
+
+### Evaluation results
+
+![AxiomRAG automated evaluation results](screenshots/automated-evaluation-results.png)
+
+**How to interpret the metrics:** The behavior pass rate checks whether the workflow produced the expected type of outcome. It is not, by itself, a factual-accuracy score. Factual correctness requires checking generated answers against reference answers and the source document. A single-question screenshot is an example of the interface, not a comprehensive benchmark.
+
+## Existing Application Screenshots
+
+### Application Interface
+
+![AxiomRAG application interface](screenshots/app-interface.png)
+
+### Document Indexing
+
+![AxiomRAG document indexing](screenshots/document-indexing.png)
+
+### Answer Verification
+
+![AxiomRAG answer verification](screenshots/answer-verification.png)
+
+### Retrieved Evidence
+
+![AxiomRAG retrieved evidence](screenshots/retrieved-evidence.png)
+
+### Initial Application Screen
+
+![AxiomRAG initial application screen](screenshots/initial-screen.png)
 
 ## Running Tests
 
@@ -195,7 +231,7 @@ python -m unittest test_agent.py -v
 To check Python syntax:
 
 ```powershell
-python -m py_compile agent.py app.py main.py test_agent.py
+python -m py_compile agent.py app.py main.py test_agent.py evaluation.py
 ```
 
 The current tests cover selected critic-parsing behavior. Additional tests for retrieval quality, answer grounding, retry limits, document-processing errors, and partial answers would strengthen the project.
@@ -220,28 +256,6 @@ The current tests cover selected critic-parsing behavior. Additional tests for r
 * Add structured logging, error handling, and performance monitoring.
 * Explore configurable retrieval strategies and reranking.
 * Add Docker-based deployment and CI/CD testing.
-
-## Screenshots
-
-### Application Interface
-
-![AxiomRAG application interface](screenshots/app-interface.png)
-
-### Document Indexing
-
-![AxiomRAG document indexing](screenshots/document-indexing.png)
-
-### Answer Verification
-
-![AxiomRAG answer verification](screenshots/answer-verification.png)
-
-### Retrieved Evidence
-
-![AxiomRAG retrieved evidence](screenshots/retrieved-evidence.png)
-
-### Initial Application Screen
-
-![AxiomRAG initial application screen](screenshots/initial-screen.png)
 
 ## Learning Outcomes
 
